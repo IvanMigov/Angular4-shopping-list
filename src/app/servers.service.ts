@@ -5,29 +5,33 @@ import {Observable} from "rxjs/Observable";
 import {ShoppingListService} from "./shopping-list/shopping-list.service";
 import {Recipe} from "./recipes/recipe.model";
 import {RecipeService} from "./recipes/recipe.service";
+import {AuthService} from "./auth/auth.service";
 
 @Injectable()
 export class ServerService {
   constructor(private http: Http,
-              private  recipeService: RecipeService) {
+              private  recipeService: RecipeService,
+              private authService: AuthService) {
 
   }
 
   storeRecipes(servers: Recipe[]) {
     const headers = new Headers({'Content-Type': 'aplication/json'});
-    return this.http.put('https://ng-recipe-book-350dd.firebaseio.com/recipes.json',
+    const token = this.authService.getToken();
+    return this.http.put('https://ng-recipe-book-350dd.firebaseio.com/recipes.json?auth='+token,
       servers,
       {headers: headers});
   };
 
   getRecipes() {
     // return this.http.get('https://udemy-ng-http-39634.firebaseio.com/data.json')
-    return this.http.get('https://ng-recipe-book-350dd.firebaseio.com/recipes.json')
+    const token = this.authService.getToken();
+    return this.http.get('https://ng-recipe-book-350dd.firebaseio.com/recipes.json?auth='+token)
       .map(
-        (response: Response)=>{
+        (response: Response) => {
           const recipes: Recipe[] = response.json();
-          for (let recipe of recipes){
-            if(!recipe['ingredients']){
+          for (let recipe of recipes) {
+            if (!recipe['ingredients']) {
               recipe['ingredients'] = [];
             }
           }
@@ -35,11 +39,12 @@ export class ServerService {
         }
       )
       .subscribe(
-        (recipes: Recipe[]) =>{
+        (recipes: Recipe[]) => {
           this.recipeService.setRecipes(recipes);
         }
       )
   };
+
   // getAppName() {
   //   return this.http.get('https://udemy-ng-http-39634.firebaseio.com/appName.json')
   //     .map(
