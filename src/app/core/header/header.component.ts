@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {ServerService} from "../servers.service";
-import {RecipeService} from "../recipes/recipe.service";
-import {AuthService} from "../auth/auth.service";
+import {ServerService} from "../../servers.service";
+import {RecipeService} from "../../recipes/recipe.service";
+import {AuthService} from "../../auth/auth.service";
 
 @Component({
   selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  templateUrl: 'header.component.html',
+  styleUrls: ['header.component.css']
 })
 export class HeaderComponent implements OnInit {
   constructor(private serverService: ServerService,
@@ -36,5 +36,7 @@ export class HeaderComponent implements OnInit {
   onLogout(){
     this.authService.logout();
   }
-
+  isAuthenticated() {
+    return this.authService.isAuthenticated();
+  }
 }
